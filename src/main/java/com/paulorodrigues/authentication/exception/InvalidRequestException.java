@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.paulorodrigues.sampledemo.test.util;
+package com.paulorodrigues.authentication.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @author paulo.rodrigues
  */
-@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-public class UnknownErrorException extends Exception {
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public class InvalidRequestException extends Exception {
 
-    public UnknownErrorException(String message){
+    public InvalidRequestException(String message){
         super(message);
     }
 }

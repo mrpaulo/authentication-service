@@ -17,24 +17,14 @@
  */
 package com.paulorodrigues.authentication.model;
 
-import com.paulo.rodrigues.librarybookstore.address.dto.CountryDTO;
-import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import jakarta.persistence.*;
+import lombok.*;
 
-import static com.paulo.rodrigues.librarybookstore.utils.FormatUtils.removeLastComma;
+import java.io.Serializable;
+
+import static com.paulorodrigues.authentication.util.FormatUtil.removeLastComma;
+
 
 /**
  *
@@ -62,10 +52,6 @@ public class Country implements Serializable{
     @Column(length = 100)
     private String name;
     
-    public CountryDTO toDTO () {
-        return CountryDTO.builder().id(id).name(name).build();
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Country{");

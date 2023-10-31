@@ -17,18 +17,15 @@
  */
 package com.paulorodrigues.authentication.model;
 
-import com.paulo.rodrigues.librarybookstore.address.dto.CityDTO;
-import java.io.Serializable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import static com.paulo.rodrigues.librarybookstore.utils.FormatUtils.printUpdateControl;
-import static com.paulo.rodrigues.librarybookstore.utils.FormatUtils.removeLastComma;
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.io.Serializable;
+
+import static com.paulorodrigues.authentication.util.FormatUtil.removeLastComma;
+
 
 /**
  *
@@ -69,9 +66,6 @@ public class City implements Serializable{
     @Column(length = 10)
     private String ibgeCode;
     
-    public CityDTO toDTO(){
-        return CityDTO.builder().id(id).name(name).build();
-    }
 
     @Override
     public String toString() {

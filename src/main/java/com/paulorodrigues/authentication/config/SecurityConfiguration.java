@@ -1,4 +1,4 @@
-package com.paulorodrigues.sampledemo.test.config;
+package com.paulorodrigues.authentication.config;
 
 import com.paulorodrigues.sampledemo.test.util.ConstantsUtil;
 import org.springframework.beans.factory.annotation.Value;

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.paulorodrigues.sampledemo.test.util;
+package com.paulorodrigues.authentication.util;
 
 import org.springframework.beans.factory.annotation.Value;
 

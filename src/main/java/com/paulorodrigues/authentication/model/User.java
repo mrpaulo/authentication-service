@@ -16,21 +16,17 @@
  */
 package com.paulorodrigues.authentication.model;
 
-import com.paulo.rodrigues.librarybookstore.address.model.Address;
-import com.paulo.rodrigues.librarybookstore.utils.ConstantsUtil;
-import com.paulo.rodrigues.librarybookstore.utils.FormatUtils;
-import com.paulo.rodrigues.librarybookstore.utils.InvalidRequestException;
-import com.paulo.rodrigues.librarybookstore.utils.MessageUtil;
-
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
+import com.paulorodrigues.authentication.exception.InvalidRequestException;
+import com.paulorodrigues.authentication.util.ConstantsUtil;
+import com.paulorodrigues.authentication.util.MessageUtil;
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 /**
  *
  * @author paulo.rodrigues
@@ -83,10 +79,10 @@ public class User {
     )
     private List<Role> roles;
     
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
     private String createBy;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updateAt;
     private String updateBy;
 

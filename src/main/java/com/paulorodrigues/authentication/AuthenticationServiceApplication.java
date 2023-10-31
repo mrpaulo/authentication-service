@@ -1,4 +1,4 @@
-package com.paulorodrigues.sampledemo.test;
+package com.paulorodrigues.authentication;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
@@ -11,9 +11,9 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableJpaRepositories(enableDefaultTransactions=false)
 @EnableAutoConfiguration
-public class SampleDemoApplication {
+public class AuthenticationServiceApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(SampleDemoApplication.class, args);
+		SpringApplication.run(AuthenticationServiceApplication.class, args);
 	}
 
 	@PostConstruct

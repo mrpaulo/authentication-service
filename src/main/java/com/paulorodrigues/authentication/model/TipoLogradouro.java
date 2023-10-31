@@ -15,13 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.paulo.rodrigues.librarybookstore.address.enums;
+package com.paulorodrigues.authentication.model;
 
 /**
  *
  * @author paulo.rodrigues
  */
-public enum ETypePublicPlace {
+public enum TipoLogradouro {
     STREET(0, "Rua"),
     AVENUE(1, "Avenida"),
     SQUARE(2, "Praça"),
@@ -31,7 +31,7 @@ public enum ETypePublicPlace {
     int cod;
     String description;
 
-    private ETypePublicPlace(int cod, String description) {
+    private TipoLogradouro(int cod, String description) {
         this.cod = cod;
         this.description = description;
     }
@@ -56,8 +56,8 @@ public enum ETypePublicPlace {
         this.description = description;
     }
     
-    public ETypePublicPlace getBookCFormatByCod(int cod) {
-        for (ETypePublicPlace value : ETypePublicPlace.values()) {
+    public TipoLogradouro getBookCFormatByCod(int cod) {
+        for (TipoLogradouro value : TipoLogradouro.values()) {
             if (cod == value.getCod()) {
                 return value;
             }

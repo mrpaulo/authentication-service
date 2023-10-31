@@ -17,25 +17,19 @@
  */
 package com.paulorodrigues.authentication.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.paulo.rodrigues.librarybookstore.address.model.Country;
-import com.paulo.rodrigues.librarybookstore.address.model.Address;
-import com.paulo.rodrigues.librarybookstore.address.model.City;
-import com.paulo.rodrigues.librarybookstore.book.model.Book;
-import com.paulo.rodrigues.librarybookstore.utils.InvalidRequestException;
-import com.paulo.rodrigues.librarybookstore.utils.ConstantsUtil;
-import com.paulo.rodrigues.librarybookstore.utils.FormatUtils;
-import com.paulo.rodrigues.librarybookstore.utils.MessageUtil;
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.Set;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import com.paulorodrigues.authentication.exception.InvalidRequestException;
+import com.paulorodrigues.authentication.util.ConstantsUtil;
+import com.paulorodrigues.authentication.util.MessageUtil;
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 
 /**
  *
@@ -88,10 +82,10 @@ public class Person implements Serializable {
     @Column(length = ConstantsUtil.MAX_SIZE_LONG_TEXT)
     private String description;
         
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
     private String createBy;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updateAt;
     private String updateBy;
 

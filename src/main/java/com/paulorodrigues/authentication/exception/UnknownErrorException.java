@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2023 paulo.rodrigues
+ * Copyright (C) 2021 paulo.rodrigues
+ * Profile: <https://github.com/mrpaulo>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,37 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.paulorodrigues.authentication.model;
+package com.paulorodrigues.authentication.exception;
 
-import jakarta.persistence.*;
-import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  *
  * @author paulo.rodrigues
  */
-@Entity
-@Data
-public class Role implements GrantedAuthority {
-    
-    public Role(String name) {
-        this.name = name;
-    }
-    public Role() {
-    }
+@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+public class UnknownErrorException extends Exception {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    
-    @Column(unique = true)
-    private String name;
-
-
-    @Override
-    public String getAuthority() {
-        return  this.name;
+    public UnknownErrorException(String message){
+        super(message);
     }
-    
 }

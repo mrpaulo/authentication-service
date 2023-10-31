@@ -1,18 +1,14 @@
-package com.paulorodrigues.sampledemo.test.sample.controller;
+package com.paulorodrigues.authentication.controller;
 
-import com.paulorodrigues.sampledemo.test.sample.model.Sample;
-import com.paulorodrigues.sampledemo.test.sample.model.SampleDTO;
-import com.paulorodrigues.sampledemo.test.sample.model.SampleFilter;
-import com.paulorodrigues.sampledemo.test.sample.service.SampleService;
-import com.paulorodrigues.sampledemo.test.util.ConstantsUtil;
-import com.paulorodrigues.sampledemo.test.util.NotFoundException;
-import com.paulorodrigues.sampledemo.test.util.UnknownErrorException;
-import com.paulorodrigues.sampledemo.test.util.ValidationException;
+
+import com.paulorodrigues.authentication.exception.NotFoundException;
+import com.paulorodrigues.authentication.exception.UnknownErrorException;
+import com.paulorodrigues.authentication.exception.ValidationException;
+import com.paulorodrigues.authentication.util.ConstantsUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 

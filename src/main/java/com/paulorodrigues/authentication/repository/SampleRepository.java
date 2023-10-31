@@ -1,4 +1,4 @@
-package com.paulorodrigues.sampledemo.test.sample.repository;
+package com.paulorodrigues.authentication.repository;
 
 import com.paulorodrigues.sampledemo.test.sample.model.Sample;
 import com.paulorodrigues.sampledemo.test.sample.model.SampleStatus;

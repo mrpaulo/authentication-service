@@ -31,17 +31,8 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>4.0.1</version>
 		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>${groovy-all.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy.modules.http-builder</groupId>
-			<artifactId>http-builder</artifactId>
-			<version>0.7.1</version>
-			<scope>test</scope>
-		</dependency>
+
+
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
@@ -104,6 +95,11 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.4.0</version>
+			</plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
@@ -115,6 +111,13 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>groovy-maven</id>
+			<url>https://maven.groovy-lang.org/release</url>
+		</repository>
+	</repositories>
 </project>

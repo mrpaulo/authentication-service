@@ -1,12 +1,12 @@
-package com.paulorodrigues.sampledemo.test.sample.service;
+package com.paulorodrigues.authentication.service;
 
 import com.paulorodrigues.sampledemo.test.sample.model.Sample;
 import com.paulorodrigues.sampledemo.test.sample.model.SampleDTO;
 import com.paulorodrigues.sampledemo.test.sample.model.SampleFilter;
 import com.paulorodrigues.sampledemo.test.sample.repository.SampleRepository;
 import com.paulorodrigues.sampledemo.test.util.MessageUtil;
-import com.paulorodrigues.sampledemo.test.util.NotFoundException;
-import com.paulorodrigues.sampledemo.test.util.ValidationException;
+import com.paulorodrigues.authentication.exception.NotFoundException;
+import com.paulorodrigues.authentication.exception.ValidationException;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

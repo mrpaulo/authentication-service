@@ -17,15 +17,17 @@
  */
 package com.paulorodrigues.authentication.model;
 
-import java.io.Serializable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static com.paulo.rodrigues.librarybookstore.utils.FormatUtils.removeLastComma;
+import java.io.Serializable;
+
+import static com.paulorodrigues.authentication.util.FormatUtil.removeLastComma;
+
 
 /**
  *

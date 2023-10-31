@@ -17,23 +17,18 @@
  */
 package com.paulorodrigues.authentication.model;
 
-import com.paulo.rodrigues.librarybookstore.address.enums.ETypePublicPlace;
-import com.paulo.rodrigues.librarybookstore.utils.InvalidRequestException;
-import com.paulo.rodrigues.librarybookstore.utils.ConstantsUtil;
-import com.paulo.rodrigues.librarybookstore.utils.FormatUtils;
-import com.paulo.rodrigues.librarybookstore.utils.MessageUtil;
+
+import com.paulorodrigues.authentication.exception.InvalidRequestException;
+import com.paulorodrigues.authentication.util.ConstantsUtil;
+import com.paulorodrigues.authentication.util.MessageUtil;
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.Optional;
 
-import static com.paulo.rodrigues.librarybookstore.utils.FormatUtils.printUpdateControl;
-import static com.paulo.rodrigues.librarybookstore.utils.FormatUtils.removeLastComma;
 
 /**
  *
@@ -57,7 +52,7 @@ public class Address implements Serializable {
     private long id;
 
     @Enumerated(EnumType.STRING)
-    private ETypePublicPlace logradouro;
+    private TipoLogradouro logradouro;
 
     @NotNull
     @OneToOne
@@ -89,10 +84,10 @@ public class Address implements Serializable {
     @Transient
     private String fmtAddress;
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
     private String createBy;
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updateAt;
     private String updateBy;
 
@@ -108,7 +103,7 @@ public class Address implements Serializable {
                 }
             }
         }
-        if(!FormatUtils.isEmpty(number)){
+        if(!Optional.ofNullable(number).isEmpty()){
             formattedAddress = number + ". " + formattedAddress;
         }
         if(!FormatUtils.isEmpty(name)){
