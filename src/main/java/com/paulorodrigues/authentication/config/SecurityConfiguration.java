@@ -1,6 +1,6 @@
 package com.paulorodrigues.authentication.config;
 
-import com.paulorodrigues.sampledemo.test.util.ConstantsUtil;
+import com.paulorodrigues.authentication.util.ConstantsUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +30,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(ConstantsUtil.SAMPLE_V1_BASE_API + "/**").permitAll()
+                        .requestMatchers(ConstantsUtil.AUTH_BASE_API + "/**").permitAll()
                         .anyRequest()
                         .authenticated()
                 )

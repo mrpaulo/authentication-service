@@ -14,19 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.paulorodrigues.authentication.model;
+package com.paulorodrigues.authentication.user.model;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import com.paulorodrigues.authentication.address.model.Address;
+import com.paulorodrigues.authentication.exception.InvalidRequestException;
+import com.paulorodrigues.authentication.util.ConstantsUtil;
+import com.paulorodrigues.authentication.util.FormatUtil;
+import com.paulorodrigues.authentication.util.MessageUtil;
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import com.paulorodrigues.authentication.exception.InvalidRequestException;
-import com.paulorodrigues.authentication.util.ConstantsUtil;
-import com.paulorodrigues.authentication.util.MessageUtil;
-import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 /**
  *
  * @author paulo.rodrigues
@@ -113,30 +116,30 @@ public class User {
 
     public void validation() throws InvalidRequestException {
 
-        if (!FormatUtils.isEmptyOrNull(name) && name.length() > ConstantsUtil.MAX_SIZE_NAME) {
+        if (!FormatUtil.isEmptyOrNull(name) && name.length() > ConstantsUtil.MAX_SIZE_NAME) {
             throw new InvalidRequestException(MessageUtil.getMessage("USER_NAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
         }
-        if (FormatUtils.isEmptyOrNull(username)) {
+        if (FormatUtil.isEmptyOrNull(username)) {
             throw new InvalidRequestException(MessageUtil.getMessage("USERNAME_NOT_INFORMED"));
         }
-        if (!FormatUtils.isEmptyOrNull(username) && username.length() > ConstantsUtil.MAX_SIZE_NAME) {
+        if (!FormatUtil.isEmptyOrNull(username) && username.length() > ConstantsUtil.MAX_SIZE_NAME) {
             throw new InvalidRequestException(MessageUtil.getMessage("USERNAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
         }
-        if (FormatUtils.isEmptyOrNull(password)) {
+        if (FormatUtil.isEmptyOrNull(password)) {
             throw new InvalidRequestException(MessageUtil.getMessage("USER_PASSWORD_NOT_INFORMED"));
         }
-        if (!FormatUtils.isEmptyOrNull(password) && password.length() > ConstantsUtil.MAX_SIZE_NAME) {
+        if (!FormatUtil.isEmptyOrNull(password) && password.length() > ConstantsUtil.MAX_SIZE_NAME) {
             throw new InvalidRequestException(MessageUtil.getMessage("USER_PASSWORD_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
         }
-        if (!FormatUtils.isEmptyOrNull(sex) && (sex.length() > 1 || (!sex.equals("M") && !sex.equals("F") && !sex.equals("O") && !sex.equals("N")))) {
+        if (!FormatUtil.isEmptyOrNull(sex) && (sex.length() > 1 || (!sex.equals("M") && !sex.equals("F") && !sex.equals("O") && !sex.equals("N")))) {
             throw new InvalidRequestException(MessageUtil.getMessage("USER_SEX_INVALID"));
         }
-        if (!FormatUtils.isEmptyOrNull(email) && email.length() > ConstantsUtil.MAX_SIZE_NAME) {
+        if (!FormatUtil.isEmptyOrNull(email) && email.length() > ConstantsUtil.MAX_SIZE_NAME) {
             throw new InvalidRequestException(MessageUtil.getMessage("USER_EMAIL_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
         }
-        String nuCpf = FormatUtils.removeFormatCPF(cpf);
+        String nuCpf = FormatUtil.removeFormatCPF(cpf);
         if (nuCpf != null && !nuCpf.isEmpty()) {
-            if( !FormatUtils.isCPF(nuCpf)) {
+            if( !FormatUtil.isCPF(nuCpf)) {
                 throw new InvalidRequestException(MessageUtil.getMessage("USER_CPF_INVALID"));
             }
             cpf = nuCpf;
@@ -146,10 +149,10 @@ public class User {
     public void persistAt() {
         if (createAt == null) {
             setCreateAt(new Date());
-            setCreateBy(FormatUtils.getUsernameLogged());
+            setCreateBy(FormatUtil.getUsernameLogged());
         } else {
             setUpdateAt(new Date());
-            setUpdateBy(FormatUtils.getUsernameLogged());
+            setUpdateBy(FormatUtil.getUsernameLogged());
         }
         
     }

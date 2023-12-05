@@ -15,13 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.paulorodrigues.authentication.model;
+package com.paulorodrigues.authentication.address.model;
 
 
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import static com.paulorodrigues.authentication.util.FormatUtil.removeLastComma;
@@ -42,6 +43,7 @@ import static com.paulorodrigues.authentication.util.FormatUtil.removeLastComma;
 @Builder
 public class City implements Serializable{
     
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @SequenceGenerator(name = "SEQ_CITY", allocationSize = 1, sequenceName = "city_id_seq")
@@ -65,8 +67,13 @@ public class City implements Serializable{
     
     @Column(length = 10)
     private String ibgeCode;
-    
 
+    public CityDTO toDTO() {
+        return CityDTO.builder()
+                .id(id)
+                .name(name)
+                .build();
+    }
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("City{");
@@ -87,4 +94,6 @@ public class City implements Serializable{
         sb.append('}');
         return sb.toString();
     }
+
+
 }

@@ -15,11 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.paulorodrigues.authentication.model;
+package com.paulorodrigues.authentication.address.model;
 
 
 import com.paulorodrigues.authentication.exception.InvalidRequestException;
 import com.paulorodrigues.authentication.util.ConstantsUtil;
+import com.paulorodrigues.authentication.util.FormatUtil;
 import com.paulorodrigues.authentication.util.MessageUtil;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import jakarta.persistence.*;
@@ -28,6 +29,9 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
+
+import static com.paulorodrigues.authentication.util.FormatUtil.printUpdateControl;
+import static com.paulorodrigues.authentication.util.FormatUtil.removeLastComma;
 
 
 /**
@@ -106,49 +110,65 @@ public class Address implements Serializable {
         if(!Optional.ofNullable(number).isEmpty()){
             formattedAddress = number + ". " + formattedAddress;
         }
-        if(!FormatUtils.isEmpty(name)){
+        if(!FormatUtil.isEmpty(name)){
             formattedAddress = name + ", " + formattedAddress;
         }
-        if(logradouro != null && !FormatUtils.isEmpty(logradouro.getDescription())){
+        if(logradouro != null && !FormatUtil.isEmpty(logradouro.getDescription())){
             formattedAddress = logradouro.getDescription() + " " + formattedAddress;
         }
         return formattedAddress;
     }
 
     public void addressValidation() throws InvalidRequestException {
-        if (FormatUtils.isEmpty(name)) {
+        if (FormatUtil.isEmpty(name)) {
             throw new InvalidRequestException(MessageUtil.getMessage("ADDRESS_NAME_NOT_INFORMED"));
         }
         if (name.length() > ConstantsUtil.MAX_SIZE_NAME) {
             throw new InvalidRequestException(MessageUtil.getMessage("ADDRESS_NAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
         }
-        if (!FormatUtils.isEmptyOrNull(number) && number.length() > ConstantsUtil.MAX_SIZE_ADDRESS_NUMBER) {
+        if (!FormatUtil.isEmptyOrNull(number) && number.length() > ConstantsUtil.MAX_SIZE_ADDRESS_NUMBER) {
             throw new InvalidRequestException(MessageUtil.getMessage("ADDRESS_NUMBER_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_ADDRESS_NUMBER + ""));
         }
-        if (!FormatUtils.isEmptyOrNull(cep) && cep.length() > ConstantsUtil.MAX_SIZE_ADDRESS_CEP) {
+        if (!FormatUtil.isEmptyOrNull(cep) && cep.length() > ConstantsUtil.MAX_SIZE_ADDRESS_CEP) {
             throw new InvalidRequestException(MessageUtil.getMessage("ADDRESS_CEP_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_ADDRESS_CEP + ""));
         }
-        if (!FormatUtils.isEmptyOrNull(zipCode) && zipCode.length() > ConstantsUtil.MAX_SIZE_ADDRESS_ZIPCODE) {
+        if (!FormatUtil.isEmptyOrNull(zipCode) && zipCode.length() > ConstantsUtil.MAX_SIZE_ADDRESS_ZIPCODE) {
             throw new InvalidRequestException(MessageUtil.getMessage("ADDRESS_ZIPCODE_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_ADDRESS_ZIPCODE + ""));
         }
-        if (!FormatUtils.isEmptyOrNull(neighborhood) && neighborhood.length() > ConstantsUtil.MAX_SIZE_NAME) {
+        if (!FormatUtil.isEmptyOrNull(neighborhood) && neighborhood.length() > ConstantsUtil.MAX_SIZE_NAME) {
             throw new InvalidRequestException(MessageUtil.getMessage("ADDRESS_NEIGHBORHOOD_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
         }
-        if (!FormatUtils.isEmptyOrNull(coordination) && coordination.length() > ConstantsUtil.MAX_SIZE_ADDRESS_COORDINATION) {
+        if (!FormatUtil.isEmptyOrNull(coordination) && coordination.length() > ConstantsUtil.MAX_SIZE_ADDRESS_COORDINATION) {
             throw new InvalidRequestException(MessageUtil.getMessage("ADDRESS_COORDINATION_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_ADDRESS_COORDINATION + ""));
         }
-        if (!FormatUtils.isEmptyOrNull(referentialPoint) && referentialPoint.length() > ConstantsUtil.MAX_SIZE_SHORT_TEXT) {
+        if (!FormatUtil.isEmptyOrNull(referentialPoint) && referentialPoint.length() > ConstantsUtil.MAX_SIZE_SHORT_TEXT) {
             throw new InvalidRequestException(MessageUtil.getMessage("ADDRESS_REFERENTIAL_POINT_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_SHORT_TEXT + ""));
         }
+    }
+
+    public AddressDTO toDTO(){
+        return AddressDTO.builder()
+                .id(id)
+                .logradouro(logradouro)
+                .city(city.toDTO())
+                .name(name)
+                .number(number)
+                .cep(cep)
+                .zipCode(zipCode)
+                .neighborhood(neighborhood)
+                .coordination(coordination)
+                .referentialPoint(referentialPoint)
+                .fmtAddress(formatAddress())
+                .build();
     }
 
     public void persistAt() {
         if (createBy == null) {
             setCreateAt(new Date());
-            setCreateBy(FormatUtils.getUsernameLogged());
+            setCreateBy(FormatUtil.getUsernameLogged());
         } else {
             setUpdateAt(new Date());
-            setUpdateBy(FormatUtils.getUsernameLogged());
+            setUpdateBy(FormatUtil.getUsernameLogged());
         }
     }
 

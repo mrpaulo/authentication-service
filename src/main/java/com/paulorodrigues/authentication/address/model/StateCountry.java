@@ -15,11 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.paulorodrigues.authentication.model;
+package com.paulorodrigues.authentication.address.model;
 
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -32,19 +35,18 @@ import static com.paulorodrigues.authentication.util.FormatUtil.removeLastComma;
  */
 @Entity
 @Table(indexes = {
-    @Index(name = "idx_name_country", columnList = "name"),
+    @Index(name = "idx_name_state", columnList = "name"),
 })
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
-public class Country implements Serializable{
+public class StateCountry implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    @SequenceGenerator(name = "SEQ_COUNTRY", allocationSize = 1, sequenceName = "country_id_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_COUNTRY")
+    @SequenceGenerator(name = "SEQ_STATE", allocationSize = 1, sequenceName = "state_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_STATE")
     @Id
     private long id;
     
@@ -52,12 +54,22 @@ public class Country implements Serializable{
     @Column(length = 100)
     private String name;
     
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "COUNTRY_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "COUNTRY_STATE"))
+    private Country country;
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Country{");
+        StringBuilder sb = new StringBuilder("City{");
         sb.append("id='").append(id).append('\'').append(", ");
         if (name != null && !name.isEmpty()) {
             sb.append("name='").append(name).append('\'').append(", ");
+        }
+        if (country != null) {
+            sb.append("country={id:'").append(country.getId()).append('\'')
+                    .append(", name:'").append(country.getName()).append('\'')
+                    .append("}, ");
         }
         sb = removeLastComma(sb);
         sb.append('}');

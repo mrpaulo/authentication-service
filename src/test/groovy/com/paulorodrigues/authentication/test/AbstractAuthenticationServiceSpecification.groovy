@@ -19,26 +19,23 @@
  *
  * @author paulo.rodrigues
  */
-package com.paulorodrigues.sampledemo.test
+package com.paulorodrigues.authentication.test
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import groovy.sql.Sql
+import com.paulorodrigues.authentication.AuthenticationServiceApplication
 import groovyx.net.http.RESTClient
 import org.apache.http.HttpResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import static groovyx.net.http.ContentType.JSON
-import static groovyx.net.http.ContentType.URLENC
-import static org.apache.http.HttpStatus.SC_OK
 
 @ActiveProfiles(["Test"])
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
@@ -49,8 +46,8 @@ import static org.apache.http.HttpStatus.SC_OK
                 "security.ignored: /**"                
         ]
 )
-@SpringBootTest(classes = SampleDemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-abstract class AbstractSampleDemoSpecification extends Specification {
+@SpringBootTest(classes = AuthenticationServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+abstract class AbstractAuthenticationServiceSpecification extends Specification {
 	
     @LocalServerPort
     int port

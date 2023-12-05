@@ -15,21 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.paulorodrigues.authentication.model;
+package com.paulorodrigues.authentication.person.model;
 
+import com.paulorodrigues.authentication.address.model.Address;
+import com.paulorodrigues.authentication.address.model.City;
+import com.paulorodrigues.authentication.address.model.Country;
 import com.paulorodrigues.authentication.exception.InvalidRequestException;
 import com.paulorodrigues.authentication.util.ConstantsUtil;
+import com.paulorodrigues.authentication.util.FormatUtil;
 import com.paulorodrigues.authentication.util.MessageUtil;
-import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  *
@@ -37,7 +40,7 @@ import java.util.Date;
  */
 @Entity
 @Table(indexes = {    
-    @Index(name = "idx_name_person", columnList = "name")
+    @Index(name = "idx_first_name_person", columnList = "firstName")
 })
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,6 +48,7 @@ import java.util.Date;
 @Builder
 public class Person implements Serializable {
     
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @SequenceGenerator(name = "SEQ_PERSON", allocationSize = 1, sequenceName = "person_id_seq")
@@ -52,17 +56,19 @@ public class Person implements Serializable {
     @Id
     private long id;
 
-    @NotNull
-    @Column(length = ConstantsUtil.MAX_SIZE_NAME)
-    private String name;
+    @Column(length = ConstantsUtil.MAX_SIZE_NAME, nullable = false)
+    private String firstName;
+
+    @Column(length = ConstantsUtil.MAX_SIZE_NAME, nullable = false)
+    private String lastName;
 
     @Column(length = ConstantsUtil.MAX_SIZE_NAME)
     private String nickName;
 
     private LocalDate birthdate;
-    
-    @Column(length = 1)
-    private String sex;
+
+    @Enumerated(EnumType.STRING)
+    private Sex sex;
 
     @Column(length = ConstantsUtil.MAX_SIZE_NAME)
     private String email;
@@ -82,35 +88,52 @@ public class Person implements Serializable {
     @Column(length = ConstantsUtil.MAX_SIZE_LONG_TEXT)
     private String description;
         
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createAt;
+    private LocalDate createAt;
     private String createBy;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateAt;
+    private LocalDate updateAt;
     private String updateBy;
 
     public void validation() throws InvalidRequestException {
-        if (FormatUtils.isEmpty(name)) {
+        if (FormatUtil.isEmpty(firstName)) {
             throw new InvalidRequestException(MessageUtil.getMessage("PERSON_NAME_NOT_INFORMED"));
         }
-        if (name.length() > ConstantsUtil.MAX_SIZE_NAME) {
-            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_NAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
-        }                       
-        if (!FormatUtils.isEmptyOrNull(sex) && (sex.length() > 1 || (!sex.equals("M") && !sex.equals("F") && !sex.equals("O") && !sex.equals("N")))) {
-            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_SEX_INVALID"));
+        if (FormatUtil.isEmpty(lastName)) {
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_NAME_NOT_INFORMED"));
         }
-        if (!FormatUtils.isEmptyOrNull(description) && description.length() > ConstantsUtil.MAX_SIZE_LONG_TEXT) {
+        if (firstName.length() > ConstantsUtil.MAX_SIZE_NAME || lastName.length() > ConstantsUtil.MAX_SIZE_NAME) {
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_NAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
+        }
+        if (!FormatUtil.isEmptyOrNull(description) && description.length() > ConstantsUtil.MAX_SIZE_LONG_TEXT) {
             throw new InvalidRequestException(MessageUtil.getMessage("PERSON_DESCRIPTION_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_LONG_TEXT + ""));
         }  
     }
 
+    public String getName(){
+        return firstName + " " + lastName;
+    }
+
+    public PersonDTO toDTO(){
+        return PersonDTO.builder()
+                .id(id)
+                .firstName(firstName)
+                .lastName(lastName)
+                .sex(sex)
+                .email(email)
+                .address(address.toDTO())
+                .birthdate(birthdate)
+                .birthCity(birthCity.toDTO())
+                .birthCountry(birthCountry.toDTO())
+
+                .build();
+    }
+
     public void persistAt() {
         if (createBy == null) {
-            setCreateAt(new Date());
-            setCreateBy(FormatUtils.getUsernameLogged());
+            setCreateAt(LocalDate.now());
+            setCreateBy(FormatUtil.getUsernameLogged());
         } else {
-            setUpdateAt(new Date());
-            setUpdateBy(FormatUtils.getUsernameLogged());
+            setUpdateAt(LocalDate.now());
+            setUpdateBy(FormatUtil.getUsernameLogged());
         }
     }
 }
