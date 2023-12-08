@@ -16,19 +16,19 @@
  */
 package com.paulorodrigues.authentication.user.model;
 
-import com.paulorodrigues.authentication.address.model.Address;
 import com.paulorodrigues.authentication.exception.InvalidRequestException;
+import com.paulorodrigues.authentication.person.model.Person;
 import com.paulorodrigues.authentication.util.ConstantsUtil;
 import com.paulorodrigues.authentication.util.FormatUtil;
 import com.paulorodrigues.authentication.util.MessageUtil;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 /**
  *
@@ -40,40 +40,25 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name="lbs_user", uniqueConstraints = {
         @UniqueConstraint(name = "unique_cpf", columnNames = "cpf"),
-        @UniqueConstraint(name = "unique_username", columnNames = "username"),
-        @UniqueConstraint(name = "unique_email", columnNames = "email")})
+        @UniqueConstraint(name = "unique_username", columnNames = "username")})
 public class User {
     
     @Id
     @SequenceGenerator(name = "SEQ_USER", allocationSize = 1, sequenceName = "user_id_seq")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_USER")
     private Long id;
-        
-    @Column(length = ConstantsUtil.MAX_SIZE_NAME)
-    private String name;
-   
+
     @NotNull
     @Column(unique = true, length = ConstantsUtil.MAX_SIZE_NAME)
     private String username;
     
-    @Column(unique = true, length = ConstantsUtil.MAX_SIZE_CPF)
-    private String cpf;
-    
-    @Column(unique = true, length = ConstantsUtil.MAX_SIZE_NAME)
-    private String email;
-    
 //    @JsonIgnore
     @Column(length = ConstantsUtil.MAX_SIZE_NAME)
     private String password;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "ADDRESS_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "ADDRESS_USER"))
-    private Address address;
-    
-    private LocalDate birthdate;
-    
-    @Column(length = 1)
-    private String sex;
+    @JoinColumn(name = "PERSON_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "PERSON_USER"))
+    private Person person;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="user_role",
@@ -82,78 +67,58 @@ public class User {
     )
     private List<Role> roles;
     
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createAt;
+    private LocalDate createAt;
     private String createBy;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateAt;
+    private LocalDate updateAt;
     private String updateBy;
 
     public User() {
     }
 
-    public User(String name, String email) {
+    public User(String name, Person person) {
         super();
-        this.name = name;
-        this.email = email;
+        this.username = name;
+        this.person = person;
     }
     public User(User user) {
         super();
-        this.name = user.getName();
-        this.email = user.getEmail();
+        this.username = user.getUsername();
+        this.person = user.getPerson();
         this.password = user.getPassword();
         this.roles = user.getRoles();
         this.id = user.getId();
     }
-    public User(String name, String email, String password, List<Role> roles) {
+    public User(String name, Person person, String password, List<Role> roles) {
         super();
-        this.name = name;
-        this.email = email;
+        this.username = name;
+        this.person = person;
         this.roles = roles;
         this.password = password;
     }
     
 
     public void validation() throws InvalidRequestException {
-
-        if (!FormatUtil.isEmptyOrNull(name) && name.length() > ConstantsUtil.MAX_SIZE_NAME) {
-            throw new InvalidRequestException(MessageUtil.getMessage("USER_NAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
-        }
-        if (FormatUtil.isEmptyOrNull(username)) {
+        if (StringUtils.isBlank(username)) {
             throw new InvalidRequestException(MessageUtil.getMessage("USERNAME_NOT_INFORMED"));
         }
         if (!FormatUtil.isEmptyOrNull(username) && username.length() > ConstantsUtil.MAX_SIZE_NAME) {
             throw new InvalidRequestException(MessageUtil.getMessage("USERNAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
         }
-        if (FormatUtil.isEmptyOrNull(password)) {
+        if (StringUtils.isBlank(password)) {
             throw new InvalidRequestException(MessageUtil.getMessage("USER_PASSWORD_NOT_INFORMED"));
         }
-        if (!FormatUtil.isEmptyOrNull(password) && password.length() > ConstantsUtil.MAX_SIZE_NAME) {
+        if (StringUtils.isNotBlank(password) && password.length() > ConstantsUtil.MAX_SIZE_NAME) {
             throw new InvalidRequestException(MessageUtil.getMessage("USER_PASSWORD_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
-        }
-        if (!FormatUtil.isEmptyOrNull(sex) && (sex.length() > 1 || (!sex.equals("M") && !sex.equals("F") && !sex.equals("O") && !sex.equals("N")))) {
-            throw new InvalidRequestException(MessageUtil.getMessage("USER_SEX_INVALID"));
-        }
-        if (!FormatUtil.isEmptyOrNull(email) && email.length() > ConstantsUtil.MAX_SIZE_NAME) {
-            throw new InvalidRequestException(MessageUtil.getMessage("USER_EMAIL_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
-        }
-        String nuCpf = FormatUtil.removeFormatCPF(cpf);
-        if (nuCpf != null && !nuCpf.isEmpty()) {
-            if( !FormatUtil.isCPF(nuCpf)) {
-                throw new InvalidRequestException(MessageUtil.getMessage("USER_CPF_INVALID"));
-            }
-            cpf = nuCpf;
         }
     }
 
     public void persistAt() {
         if (createAt == null) {
-            setCreateAt(new Date());
+            setCreateAt(LocalDate.now());
             setCreateBy(FormatUtil.getUsernameLogged());
         } else {
-            setUpdateAt(new Date());
+            setUpdateAt(LocalDate.now());
             setUpdateBy(FormatUtil.getUsernameLogged());
         }
-        
     }
 }

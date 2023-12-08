@@ -6,7 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.InputMismatchException;
 
 public class FormatUtil {
@@ -29,7 +29,7 @@ public class FormatUtil {
         return sb;
     }
 
-    public  static StringBuilder printUpdateControl(StringBuilder sb, Date createAt, String createBy, Date updateAt, String updateBy){
+    public  static StringBuilder printUpdateControl(StringBuilder sb, LocalDate createAt, String createBy, LocalDate updateAt, String updateBy){
         if (createAt != null) {
             sb.append("createAt=").append(createAt).append(", ");
         }

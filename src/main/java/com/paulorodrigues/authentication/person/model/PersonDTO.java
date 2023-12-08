@@ -20,12 +20,17 @@ package com.paulorodrigues.authentication.person.model;
 import com.paulorodrigues.authentication.address.model.AddressDTO;
 import com.paulorodrigues.authentication.address.model.CityDTO;
 import com.paulorodrigues.authentication.address.model.CountryDTO;
+import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Objects;
+
+import static com.paulorodrigues.authentication.util.FormatUtil.printUpdateControl;
+import static com.paulorodrigues.authentication.util.FormatUtil.removeLastComma;
 
 /**
  *
@@ -44,6 +49,7 @@ public class PersonDTO  {
     private String nickName;
     private LocalDate birthdate;
     private Sex sex;
+    private String cpf;
     private String email;
     private CityDTO birthCity;
     private CountryDTO birthCountry;
@@ -56,7 +62,49 @@ public class PersonDTO  {
     private String updateBy;
 
     public String getName(){
-        return firstName + " " + lastName;
+        return String.format(firstName, " ", lastName);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("PersonDTO{");
+        sb.append("id=").append(id).append(", ");
+        if (StringUtils.isNotBlank(firstName)) {
+            sb.append("firstName='").append(firstName).append('\'').append(", ");
+        }
+        if (StringUtils.isNotBlank(lastName)) {
+            sb.append("lastName='").append(lastName).append('\'').append(", ");
+        }
+        if (StringUtils.isNotBlank(nickName)) {
+            sb.append("nickName='").append(nickName).append('\'').append(", ");
+        }
+        if (Objects.nonNull(birthdate)) {
+            sb.append("birthdate='").append(birthdate).append('\'').append(", ");
+        }
+        if (Objects.nonNull(sex)) {
+            sb.append("sex=").append(sex).append(", ");
+        }
+        if (StringUtils.isNotBlank(cpf)) {
+            sb.append("cpf='").append(cpf).append('\'').append(", ");
+        }
+        if (StringUtils.isNotBlank(email)) {
+            sb.append("email='").append(email).append('\'').append(", ");
+        }
+        if (Objects.nonNull(birthCity)) {
+            sb.append("birthCity='").append(birthCity).append('\'').append(", ");
+        }
+        if (Objects.nonNull(birthCountry)) {
+            sb.append("birthCountry='").append(birthCountry).append('\'').append(", ");
+        }
+        if (Objects.nonNull(address)) {
+            sb.append("address='").append(address).append('\'').append(", ");
+        }
+        if (StringUtils.isNotBlank(description)) {
+            sb.append("description='").append(description).append('\'').append(", ");
+        }
+        sb = printUpdateControl(sb, createAt, createBy, updateAt, updateBy);
+        removeLastComma(sb);
+        sb.append('}');
+        return sb.toString();
+    }
 }

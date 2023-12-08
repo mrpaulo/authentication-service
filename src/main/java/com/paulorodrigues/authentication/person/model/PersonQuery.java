@@ -40,6 +40,7 @@ public class PersonQuery extends PageableQuery {
     private String lastName;
     private String nickName;
     private String sex;
+    private String cpf;
     private String email;
     private CityDTO birthCity;
     private CountryDTO birthCountry;

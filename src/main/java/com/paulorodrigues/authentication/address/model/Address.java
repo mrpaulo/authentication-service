@@ -23,11 +23,13 @@ import com.paulorodrigues.authentication.util.ConstantsUtil;
 import com.paulorodrigues.authentication.util.FormatUtil;
 import com.paulorodrigues.authentication.util.MessageUtil;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.paulorodrigues.authentication.util.FormatUtil.printUpdateControl;
@@ -88,11 +90,9 @@ public class Address implements Serializable {
     @Transient
     private String fmtAddress;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createAt;
+    private LocalDate createAt;
     private String createBy;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateAt;
+    private LocalDate updateAt;
     private String updateBy;
 
     public String formatAddress() {
@@ -164,10 +164,10 @@ public class Address implements Serializable {
 
     public void persistAt() {
         if (createBy == null) {
-            setCreateAt(new Date());
+            setCreateAt(LocalDate.now());
             setCreateBy(FormatUtil.getUsernameLogged());
         } else {
-            setUpdateAt(new Date());
+            setUpdateAt(LocalDate.now());
             setUpdateBy(FormatUtil.getUsernameLogged());
         }
     }
@@ -176,40 +176,40 @@ public class Address implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder("Address{");
         sb.append("id='").append(id).append('\'').append(", ");
-        if (logradouro != null) {
+        if (Objects.nonNull(logradouro)) {
             sb.append("logradouro='").append(logradouro).append('\'').append(", ");
         }
-        if (city != null) {
+        if (Objects.nonNull(city)) {
             sb.append("city={id:'").append(city.getId()).append('\'')
                     .append(", name:'").append(city.getName()).append('\'')
                     .append("}, ");
         }
-        if (name != null && !name.isEmpty()) {
+        if (StringUtils.isNotBlank(name)) {
             sb.append("name='").append(name).append('\'').append(", ");
         }
-        if (number != null && !number.isEmpty()) {
+        if (StringUtils.isNotBlank(number)) {
             sb.append("number='").append(number).append('\'').append(", ");
         }
-        if (cep != null && !cep.isEmpty()) {
+        if (StringUtils.isNotBlank(cep)) {
             sb.append("cep='").append(cep).append('\'').append(", ");
         }
-        if (zipCode != null && !zipCode.isEmpty()) {
+        if (StringUtils.isNotBlank(zipCode)) {
             sb.append("zipCode='").append(zipCode).append('\'').append(", ");
         }
-        if (neighborhood != null && !neighborhood.isEmpty()) {
+        if (StringUtils.isNotBlank(neighborhood)) {
             sb.append("neighborhood='").append(neighborhood).append('\'').append(", ");
         }
-        if (coordination != null && !coordination.isEmpty()) {
+        if (StringUtils.isNotBlank(coordination)) {
             sb.append("coordination='").append(coordination).append('\'').append(", ");
         }
-        if (referentialPoint != null && !referentialPoint.isEmpty()) {
+        if (StringUtils.isNotBlank(referentialPoint)) {
             sb.append("referentialPoint='").append(referentialPoint).append('\'').append(", ");
         }
-        if (fmtAddress != null && !fmtAddress.isEmpty()) {
+        if (StringUtils.isNotBlank(fmtAddress)) {
             sb.append("fmtAddress='").append(fmtAddress).append('\'').append(", ");
         }
         sb = printUpdateControl(sb, createAt, createBy, updateAt, updateBy);
-        sb = removeLastComma(sb);
+        removeLastComma(sb);
         sb.append('}');
         return sb.toString();
     }

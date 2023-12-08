@@ -15,24 +15,28 @@ import java.time.LocalDate;
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
     @Query("SELECT s "
-            + " FROM Person s "
-            + " WHERE (:id IS NULL OR s.id = :id) "
-            + " AND (:name IS NULL OR :name = '' OR LOWER(s.firstName) LIKE LOWER(CONCAT('%',:name,'%'))) "
-            + " AND (:description IS NULL OR :description = '' OR s.description LIKE CONCAT('%',:description,'%')) "
-            + " AND ((coalesce(:startDate, null) is null AND coalesce(:endDate, null) is null) OR (s.birthdate BETWEEN :startDate AND :endDate)) "
-            + "")
+            + " FROM Person p "
+            + " WHERE (:id IS NULL OR p.id = :id) "
+            + " AND (:name IS NULL OR :name = '' OR LOWER(s.firstName) LIKE LOWER(CONCAT('%',:name,'%')) OR LOWER(s.lastName) LIKE LOWER(CONCAT('%',:name,'%'))) "
+            + " AND (:email IS NULL OR :email = '' OR p.email LIKE CONCAT('%',:email,'%')) "
+            + " AND (:cpf IS NULL OR :cpf = '' OR p.cpf LIKE CONCAT('%',:cpf,'%')) "
+            + " AND (:sex IS NULL OR :sex = '' OR p.sex LIKE CONCAT('%',:sex,'%')) "
+            + " AND ((coalesce(:startDate, null) is null AND coalesce(:endDate, null) is null) OR (p.birthdate BETWEEN :startDate AND :endDate)) ")
     Page<Person> findByFilterPageable(
             @Param("id") Long id,
             @Param("name") String name,
-            @Param("description") String description,
+            @Param("email") String email,
+            @Param("cpf") String cpf,
+            @Param("sex") String sex,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             Pageable pageable);
 
     @Query("SELECT s "
-            + " FROM Person s "
-            + " WHERE (:name IS NULL OR :name = '' OR LOWER(s.firstName) LIKE LOWER(CONCAT('%',:name,'%'))) "
-            + "")
+            + " FROM Person p "
+            + " WHERE (:name IS NULL OR :name = '' OR"
+            + " LOWER(p.firstName) LIKE LOWER(CONCAT('%',:name,'%')) OR "
+            + " LOWER(p.lastName) LIKE LOWER(CONCAT('%',:name,'%'))) ")
     Page<Person> findByName(@Param("name") String name,
                             Pageable pageable);
 }

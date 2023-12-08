@@ -24,6 +24,7 @@ import com.paulorodrigues.authentication.exception.InvalidRequestException;
 import com.paulorodrigues.authentication.util.ConstantsUtil;
 import com.paulorodrigues.authentication.util.FormatUtil;
 import com.paulorodrigues.authentication.util.MessageUtil;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,14 +34,21 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
+
+import static com.paulorodrigues.authentication.util.FormatUtil.printUpdateControl;
+import static com.paulorodrigues.authentication.util.FormatUtil.removeLastComma;
 
 /**
  *
  * @author paulo.rodrigues
  */
 @Entity
-@Table(indexes = {    
-    @Index(name = "idx_first_name_person", columnList = "firstName")
+@Table(
+        uniqueConstraints = {
+            @UniqueConstraint(name = "unique_cpf", columnNames = "cpf")},
+        indexes = {
+            @Index(name = "idx_first_name_person", columnList = "firstName")
 })
 @NoArgsConstructor
 @AllArgsConstructor
@@ -73,6 +81,9 @@ public class Person implements Serializable {
     @Column(length = ConstantsUtil.MAX_SIZE_NAME)
     private String email;
 
+    @Column(unique = true, length = ConstantsUtil.MAX_SIZE_CPF)
+    private String cpf;
+
     @ManyToOne
     @JoinColumn(name = "BIRTH_CITY_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "BIRTH_CITY_PERSON"))
     private City birthCity;
@@ -94,22 +105,38 @@ public class Person implements Serializable {
     private String updateBy;
 
     public void validation() throws InvalidRequestException {
-        if (FormatUtil.isEmpty(firstName)) {
-            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_NAME_NOT_INFORMED"));
+        if (StringUtils.isBlank(firstName)) {
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_FIRST_NAME_NOT_INFORMED"));
         }
-        if (FormatUtil.isEmpty(lastName)) {
-            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_NAME_NOT_INFORMED"));
+        if (StringUtils.isBlank(lastName)) {
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_LAST_NAME_NOT_INFORMED"));
         }
-        if (firstName.length() > ConstantsUtil.MAX_SIZE_NAME || lastName.length() > ConstantsUtil.MAX_SIZE_NAME) {
-            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_NAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
+        if (firstName.length() > ConstantsUtil.MAX_SIZE_NAME) {
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_FIRST_NAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
         }
-        if (!FormatUtil.isEmptyOrNull(description) && description.length() > ConstantsUtil.MAX_SIZE_LONG_TEXT) {
+        if (lastName.length() > ConstantsUtil.MAX_SIZE_NAME) {
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_LAST_NAME_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
+        }
+        if (StringUtils.isNotBlank(description) && description.length() > ConstantsUtil.MAX_SIZE_LONG_TEXT) {
             throw new InvalidRequestException(MessageUtil.getMessage("PERSON_DESCRIPTION_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_LONG_TEXT + ""));
-        }  
+        }
+        if (StringUtils.isNotBlank(nickName) && nickName.length() > ConstantsUtil.MAX_SIZE_NAME) {
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_DESCRIPTION_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
+        }
+        if (StringUtils.isNotBlank(email) && email.length() > ConstantsUtil.MAX_SIZE_NAME) {
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_EMAIL_OUT_OF_BOUND", ConstantsUtil.MAX_SIZE_NAME + ""));
+        }
+        setCpf(FormatUtil.removeFormatCPF(cpf));
+        if (StringUtils.isNotBlank(cpf) && !FormatUtil.isCPF(cpf)) {
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_CPF_INVALID"));
+        }
+        if(Objects.nonNull(birthdate) && birthdate.isAfter(LocalDate.now())){
+            throw new InvalidRequestException(MessageUtil.getMessage("PERSON_BIRTHDATE_INVALID"));
+        }
     }
 
     public String getName(){
-        return firstName + " " + lastName;
+        return String.format(firstName, " ", lastName);
     }
 
     public PersonDTO toDTO(){
@@ -117,13 +144,14 @@ public class Person implements Serializable {
                 .id(id)
                 .firstName(firstName)
                 .lastName(lastName)
-                .sex(sex)
+                .nickName(nickName)
                 .email(email)
+                .cpf(cpf)
+                .sex(sex)
                 .address(address.toDTO())
                 .birthdate(birthdate)
                 .birthCity(birthCity.toDTO())
                 .birthCountry(birthCountry.toDTO())
-
                 .build();
     }
 
@@ -135,5 +163,48 @@ public class Person implements Serializable {
             setUpdateAt(LocalDate.now());
             setUpdateBy(FormatUtil.getUsernameLogged());
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Person{");
+        sb.append("id=").append(id).append(", ");
+        if (StringUtils.isNotBlank(firstName)) {
+            sb.append("firstName='").append(firstName).append('\'').append(", ");
+        }
+        if (StringUtils.isNotBlank(lastName)) {
+            sb.append("lastName='").append(lastName).append('\'').append(", ");
+        }
+        if (StringUtils.isNotBlank(nickName)) {
+            sb.append("nickName='").append(nickName).append('\'').append(", ");
+        }
+        if (Objects.nonNull(birthdate)) {
+            sb.append("birthdate='").append(birthdate).append('\'').append(", ");
+        }
+        if (Objects.nonNull(sex)) {
+            sb.append("sex=").append(sex).append(", ");
+        }
+        if (StringUtils.isNotBlank(cpf)) {
+            sb.append("cpf='").append(cpf).append('\'').append(", ");
+        }
+        if (StringUtils.isNotBlank(email)) {
+            sb.append("email='").append(email).append('\'').append(", ");
+        }
+        if (Objects.nonNull(birthCity)) {
+            sb.append("birthCity='").append(birthCity).append('\'').append(", ");
+        }
+        if (Objects.nonNull(birthCountry)) {
+            sb.append("birthCountry='").append(birthCountry).append('\'').append(", ");
+        }
+        if (Objects.nonNull(address)) {
+            sb.append("address='").append(address).append('\'').append(", ");
+        }
+        if (StringUtils.isNotBlank(description)) {
+            sb.append("description='").append(description).append('\'').append(", ");
+        }
+        sb = printUpdateControl(sb, createAt, createBy, updateAt, updateBy);
+        removeLastComma(sb);
+        sb.append('}');
+        return sb.toString();
     }
 }

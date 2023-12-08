@@ -1,6 +1,5 @@
 package com.paulorodrigues.authentication.person.service;
 
-
 import com.paulorodrigues.authentication.address.service.AddressService;
 import com.paulorodrigues.authentication.exception.InvalidRequestException;
 import com.paulorodrigues.authentication.exception.NotFoundException;
@@ -9,6 +8,7 @@ import com.paulorodrigues.authentication.person.model.*;
 import com.paulorodrigues.authentication.person.repository.PersonRepository;
 import com.paulorodrigues.authentication.util.MessageUtil;
 import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,9 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.paulorodrigues.authentication.util.FormatUtil.buildPageable;
+import static com.paulorodrigues.authentication.util.FormatUtil.removeFormatCPF;
 
 @Service
 @Log4j2
@@ -42,7 +44,9 @@ public class PersonService {
         Page<Person> personPage = personRepository.findByFilterPageable(
                 personQuery.getId(),
                 personQuery.getName(),
-                personQuery.getDescription(),
+                personQuery.getEmail(),
+                removeFormatCPF(personQuery.getCpf()),
+                personQuery.getSex(),
                 personQuery.getStartDate(),
                 personQuery.getEndDate(),
                 pageable);
@@ -53,21 +57,30 @@ public class PersonService {
 
     public Person findById(Long personId) throws NotFoundException {
         log.info("Finding person by personId={}", personId);
+        String.format(" fdfdof %s", personId.toString());
         return personRepository.findById(personId)
                 .orElseThrow(
-                        () -> new NotFoundException(MessageUtil.getMessage("SAMPLE_NOT_FOUND") + " ID: " + personId)
+                        () -> new NotFoundException(String.format(MessageUtil.getMessage("PERSON_NOT_FOUND"), " ID: %s", personId))
                 );
     }
 
-    public PersonResponse findByName (PersonRequest personRequest) throws ValidationException {
+    public PersonResponse findByName (PersonRequest personRequest) throws InvalidRequestException {
+        validatePersonRequestFindByName(personRequest);
         PersonQuery personQuery = personRequest.getQuery();
+        log.info("Finding person by name={}", personQuery.getName());
         Pageable pageable = buildPageable(personQuery);
         Page<Person> personPage = personRepository.findByName(personQuery.getName(), pageable);
         return new PersonResponse(peoplePageToDTOs(personPage));
     }
 
+    private void validatePersonRequestFindByName(PersonRequest personRequest) throws InvalidRequestException {
+        if(Objects.isNull(personRequest) || Objects.isNull(personRequest.getQuery()) || Strings.isBlank(personRequest.getQuery().getName())){
+            throw new InvalidRequestException(MessageUtil.getMessage("REQUEST_PERSON_NAME_INVALID"));
+        }
+    }
+
     public PersonDTO create(Person person) throws ValidationException, InvalidRequestException {
-        assert person != null : MessageUtil.getMessage("SAMPLE_IS_NULL");
+        assert Objects.nonNull(person) : MessageUtil.getMessage("SAMPLE_IS_NULL");
 
         log.info("Creating person name={}", person.getName());
         return save(person).toDTO();

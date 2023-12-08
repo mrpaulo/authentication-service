@@ -67,7 +67,7 @@ public class PersonController {
     }
 
     @PostMapping(ConstantsUtil.FIND_BY_NAME_PAGEABLE_PATH)
-    public ResponseEntity<PersonResponse> findByName(@RequestBody PersonRequest personRequest) throws ValidationException {
+    public ResponseEntity<PersonResponse> findByName(@RequestBody PersonRequest personRequest) throws InvalidRequestException {
         try {
             return ResponseEntity.ok().body(personService.findByName(personRequest));
         } catch (Exception e) {
